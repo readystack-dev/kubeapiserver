@@ -1,0 +1,11 @@
+image_manifest_digest=sha256:3d0295d9d441a02aefb75dac3ccc5d09c3c9d34cbcec761426a3e9af6c8841cf
+config_digest=sha256:138f5170845ec63235eff0501492a5ab8d79f8011c97ee3a907de3ea5e975c9e
+tag=readystack/kubeapiserver:v1.36.6-CE-ubuntu24.04-r5
+probe_port=6443
+probe_path=/
+probe_timeout=180
+probe_exec=/usr/local/bin/rs-probe -k https://127.0.0.1:6443/readyz
+verify_boot=oneshot
+verify_oneshot_arg=kube-apiserver
+verify_oneshot_arg=--version
+verify_oneshot_expect=Kubernetes v1.36.6
