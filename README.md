@@ -5,7 +5,35 @@ The offline build kit for the Docker image `readystack/kubeapiserver:v1.36.6-CE-
 - Release: [v1.36.6-CE-ubuntu24.04-r5](https://github.com/readystack-dev/kubeapiserver/releases/tag/v1.36.6-CE-ubuntu24.04-r5)
 - Image: [`docker.io/readystack/kubeapiserver:v1.36.6-CE-ubuntu24.04-r5`](https://hub.docker.com/r/readystack/kubeapiserver/tags), manifest digest `sha256:3d0295d9d441a02aefb75dac3ccc5d09c3c9d34cbcec761426a3e9af6c8841cf`
 - Product page: https://readystack.dev/products/kubeapiserver
+- Source and build recipe: https://readystack.dev/products/kubeapiserver/recipe
+- Build trail: https://readystack.dev/products/kubeapiserver/trail/v1.36.6-CE-ubuntu24.04-r5
 - Defects: this repository's Issues (defects recorded from 25 November 2026 on) and https://readystack.dev/defects.html?product=kubeapiserver
+
+## The image
+
+One binary per image, as upstream's images: /usr/local/bin/kube-apiserver, started by kubeadm's static Pod manifest /etc/kubernetes/manifests/kube-apiserver.yaml (command: kube-apiserver --advertise-address=... ). The image's ENTRYPOINT is /go-runner (upstream's kube-log-runner); a Pod command replaces it. In the Kubernetes VM Stack the image is mirrored into the local registry as <LOCAL_REGISTRY>/kube-apiserver:v1.36.6 and kubeadm init/join pull it from there (imageRepository in kubeadm-config.yaml).
+
+## Who uses kube-apiserver and why
+
+Cluster administrators and platform engineers who build and run their own Kubernetes control plane.
+
+kube-apiserver serves the Kubernetes API. It validates and configures the cluster's objects, such as pods and services, and is the front end to the shared state that every other component works through.
+
+A typical use: When an engineer applies a new deployment, the request goes to kube-apiserver. It checks the request, runs admission control and stores the result in etcd; the scheduler, the controllers and the kubelet on each node watch the API server and act on the change.
+
+From the upstream project's own description: https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/, https://kubernetes.io/docs/concepts/overview/components/.
+
+## This release
+
+- Docker Scout policy grade at release: **A** (94%), graded 2026-11-21 with `docker scout policy` (CLI 1.26.0, docker-default configuration).
+  - Docker Scout counts 83 packages with copyleft licences (GPL, LGPL, MPL), all of them operating-system packages (it counts only packages whose licence it can read; the SBOM lists every component).
+- Signed with ReadyStack's release key (fingerprint `04daa92344a52dbc`): https://readystack.dev/keys/cosign.pub.
+- Runs as a non-root user (`999:999`).
+- Attestations on the image: an SPDX SBOM and SLSA provenance v1.
+- Rebuilt from this kit with network egress blocked on 2026-11-21; the rebuilt image digest is the published one.
+- Base: Ubuntu 24.04.
+
+The current grade, measured again every day, is on https://readystack.dev/products/kubeapiserver.
 
 kube-apiserver is distributed under its upstream licence (Apache-2.0); the kit contains upstream's source under that licence, and each vendored component under its own.
 
@@ -39,3 +67,5 @@ The build trail (`ReadyStack-kubeapiserver-v1.36.6-CE-ubuntu24.04-r5.trail.json`
 ## This repository
 
 `recipe/` holds the kit's recipe files (Dockerfiles, build scripts, pins) as published at https://readystack.dev/products/kubeapiserver/recipe. The complete kit is the release download. Each release is a tag here.
+
+— ReadyStack · https://readystack.dev
